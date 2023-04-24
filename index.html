@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Formulario de tarjeta de crédito</title>
+    <script>
+      function validarTarjetaCredito() {
+        const tarjeta = document.getElementById('numeroTarjeta').value.replace(/-/g, ''); // se remueven los guiones para facilitar la validación
+        const regexSoloNumeros = /^[0-9]+$/; // expresión regular para validar que solo haya números
+
+        if (!regexSoloNumeros.test(tarjeta) || tarjeta.length !== 16) { // se verifica que la longitud sea de 16 y que solo haya números
+          return { valido: false, numero: tarjeta, error: 'longitud_erronea' };
+        }
+
+        if (new Set(tarjeta).size <= 1) { // se crea un conjunto a partir de la tarjeta para verificar que haya al menos 2 dígitos distintos
+          return { valido: false, numero: tarjeta, error: 'digitos_repetidos' };
+        }
+
+        return { valido: true, numero: tarjeta };
+      }
+
+      function submitFormulario() {
+        const resultado = validarTarjetaCredito();
+        const mensajeResultado = document.getElementById('mensajeResultado');
+
+        if (resultado.valido) {
+          mensajeResultado.innerHTML = `El número de tarjeta ${resultado.numero} es válido.`;
+        } else {
+          mensajeResultado.innerHTML = `El número de tarjeta ${resultado.numero} es inválido: ${resultado.error}.`;
+        }
+
+        return false; // se evita el envío del formulario para evitar recargar la página
+      }
+    </script>
+  </head>
+  <body>
+    <form onsubmit="return submitFormulario()">
+      <label for="numeroTarjeta">Número de tarjeta de crédito:</label>
+      <input type="text" id="numeroTarjeta" name="numeroTarjeta" required pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}">
+      <button type="submit">Validar</button>
+    </form>
+
+    <div id="mensajeResultado"></div>
+  </body>
+</html>
